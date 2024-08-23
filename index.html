@@ -1,1 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stand Up Reminder</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #000, #555);
+            background-size: 200% 200%;
+            animation: gradientAnimation 10s ease infinite;
+            color: #fff;
+            text-align: center;
+            transition: background 0.5s, color 0.5s;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        h1 {
+            font-size: 3.5em;
+            margin: 20px 0;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        .timer {
+            font-size: 8em;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            margin: 20px 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        select, button, input {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+            background-color: #333;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover, select:hover, input:hover {
+            background-color: #777;
+            transform: scale(1.05);
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        select {
+            width: 220px;
+        }
+
+        #soundSelect {
+            width: 250px;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.5em;
+            }
+            .timer {
+                font-size: 5em;
+            }
+            select, button, input {
+                font-size: 1em;
+                padding: 8px 16px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Time to Stand Up!</h1>
+    <div class="timer" id="timer">25:00</div>
+    <div class="controls">
+        <div class="input-group">
+            <label for="customTime">Set Custom Timer (minutes): </label>
+            <input type="number" id="customTime" placeholder="Enter minutes" min="1">
+        </div>
+        <select id="timeSelect">
+            <option value="15">15 minutes</option>
+            <option value="20">20 minutes</option>
+            <option value="25" selected>25 minutes</option>
+            <option value="30">30 minutes</option>
+            <option value="45">45 minutes</option>
+        </select>
+        <select id="soundSelect">
+            <option value="https://www.soundjay.com/button/sounds/beep-07.mp3">Beep</option>
+            <option value="https://www.soundjay.com/button/sounds/beep-09.mp3">Long Beep</option>
+            <option value="https://www.soundjay.com/button/sounds/beep-10.mp3">Short Beep</option>
+        </select>
+        <button onclick="startTimer()">Start Timer</button>
+    </div>
+
+    <!-- Sound for notification -->
+    <audio id="alertSound" preload="auto"></audio>
+
+    <script>
+        let countdown;
+        const alertSound = document.getElementById('alertSound');
+
+        function startTimer() {
+            clearInterval(countdown);
+            const selectedTime = parseInt(document.getElementById('timeSelect').value);
+            const customTime = parseInt(document.getElementById('customTime').value);
+            const timeToUse = customTime || selectedTime;
+            const now = Date.now();
+            const then = now + timeToUse * 60 * 1000;
+            displayTimeLeft(timeToUse * 60);
+            countdown = setInterval(() => {
+                const secondsLeft = Math.round((then - Date.now()) / 1000);
+                if (secondsLeft <= 0) {
+                    clearInterval(countdown);
+                    alertSound.play();
+                    alert('Time to stand up and stretch!');
+                    return;
+                }
+                displayTimeLeft(secondsLeft);
+            }, 1000);
+        }
+
+        function displayTimeLeft(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainderSeconds = seconds % 60;
+            const display = `${minutes}:${remainderSeconds < 10 ? '0' : ''}${remainderSeconds}`;
+            document.getElementById('timer').textContent = display;
+        }
+
+        // Update sound when selected
+        document.getElementById('soundSelect').addEventListener('change', function() {
+            alertSound.src = this.value;
+        });
+
+        // Set default sound
+        document.getElementById('soundSelect').dispatchEvent(new Event('change'));
+    </script>
+
+</body>
+</html>
 
