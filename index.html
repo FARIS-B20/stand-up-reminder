@@ -1,1 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stand Up Reminder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Time to Stand Up!</h1>
+    <p id="timer">Next reminder in: 25:00</p>
+    <button onclick="startTimer()">Start Timer</button>
+
+    <script>
+        let countdown;
+        function startTimer() {
+            clearInterval(countdown);
+            const now = Date.now();
+            const then = now + 25 * 60 * 1000; // 25 minutes from now
+            displayTimeLeft(25 * 60);
+            countdown = setInterval(() => {
+                const secondsLeft = Math.round((then - Date.now()) / 1000);
+                if (secondsLeft <= 0) {
+                    clearInterval(countdown);
+                    alert('Time to stand up and stretch!');
+                    return;
+                }
+                displayTimeLeft(secondsLeft);
+            }, 1000);
+        }
+
+        function displayTimeLeft(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainderSeconds = seconds % 60;
+            const display = `${minutes}:${remainderSeconds < 10 ? '0' : ''}${remainderSeconds}`;
+            document.getElementById('timer').textContent = `Next reminder in: ${display}`;
+        }
+    </script>
+
+</body>
+</html>
 
